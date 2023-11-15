@@ -1,5 +1,12 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+
 // Kelas ReservasiManager untuk mengelola daftar reservasi
-class ReservasiManager {
+public class ReservasiManager {
     // List untuk menyimpan objek Reservasi
     private List<Reservasi> reservasiList;
 
@@ -33,7 +40,7 @@ class ReservasiManager {
     public void tambahkanReservasi(Reservasi reservasi) {
     if (cekKetersediaan(reservasi)) {
         reservasiList.add(reservasi);
-        //System.out.println("\nRESERVASI BERHASIL DITAMBAHKAN KE DALAM DAFTAR");
+       //System.out.println("\nRESERVASI BERHASIL DITAMBAHKAN KE DALAM DAFTAR");
 
         // Memperbarui daftar reservasi
         updateReservasiList(reservasiList);
@@ -107,3 +114,24 @@ class ReservasiManager {
             //System.out.println("Gagal membaca daftar reservasi dari file: " + e.getMessage());
         }
     }
+
+    // Metode untuk menyimpan daftar reservasi ke dalam file
+    public void simpanReservasiKeFile(String namaFile) {
+        try (FileWriter writer = new FileWriter(namaFile)) {
+            for (Reservasi reservasi : reservasiList) {
+                // Format data reservasi: namaLapangan,jenisLapangan,jam,hari,tanggalReservasi,jumlahJam
+                writer.write(
+                        reservasi.getLapangan().getNama() + "," +
+                                reservasi.getLapangan().getJenis() + "," +
+                                reservasi.getLapangan().getJam() + "," +
+                                reservasi.getHari() + "," +
+                                reservasi.getTanggalReservasi() + "," +
+                                reservasi.getJumlahJam() + "\n"
+                );
+            }
+            //System.out.println("Daftar reservasi disimpan ke dalam file.");
+        } catch (IOException e) {
+            //System.out.println("Gagal menyimpan daftar reservasi ke dalam file: " + e.getMessage());
+        }
+    }
+}
