@@ -1,1 +1,256 @@
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.io.*;
 
+// Kelas ReservasiLapangan untuk manajemen reservasi lapangan
+public class ReservasiLapangan {
+    private static ReservasiLapangan instance = new ReservasiLapangan(); // Singleton instance dari kelas ReservasiLapangan
+    private List<Pengguna> daftarPengguna; // Daftar pengguna yang terdaftar
+    private String currentUser; // Pengguna yang sedang login
+    List<Reservasi> updatedReservasiList; // Daftar reservasi yang telah diperbarui
+
+    // Metode untuk mendapatkan pengguna yang sedang login
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
+    // Konstruktor privat untuk Singleton pattern
+    private ReservasiLapangan() {
+        this.daftarPengguna = new ArrayList<>();
+    }
+
+    // Metode untuk mendapatkan instance dari ReservasiLapangan
+    public static ReservasiLapangan getInstance() {
+        return instance;
+    }
+
+    // Metode untuk menyimpan daftar pengguna ke file teks
+    public void simpanDaftarPengguna() {
+        try (FileWriter writer = new FileWriter("daftar_pengguna.txt")) {
+            for (Pengguna pengguna : daftarPengguna) {
+                writer.write(pengguna.getUsername() + "," + pengguna.getPassword() + "\n");
+            }
+            //System.out.println("Daftar pengguna disimpan ke dalam file.");
+        } catch (IOException e) { // Menangani kesalahan jika gagal menyimpan
+            //System.out.println("Gagal menyimpan daftar pengguna ke dalam file: " + e.getMessage());
+        }
+    }
+
+    // Metode untuk membaca daftar pengguna dari file teks
+    public void bacaDaftarPengguna() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("daftar_pengguna.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    String username = parts[0];
+                    String password = parts[1];
+                    daftarPengguna.add(new Pengguna(username, password));
+                }
+            }
+            //System.out.println("Membaca daftar pengguna dari file.");
+        } catch (IOException e) { // Menangani kesalahan jika gagal membaca
+            //System.out.println("Gagal membaca daftar pengguna dari file: " + e.getMessage());
+        }
+    }
+
+    // Metode untuk menambahkan pengguna baru
+    public void tambahPengguna(String username, String password) {
+        daftarPengguna.add(new Pengguna(username, password));
+    }
+
+    // Metode untuk melakukan login
+    public boolean login(String username, String password) {
+        for (Pengguna pengguna : daftarPengguna) {
+            if (pengguna.getUsername().equals(username) && pengguna.getPassword().equals(password)) {
+                currentUser = username;
+                return true; // Login berhasil
+            }
+        }
+        return false; // Login gagal
+    }
+
+    // Metode untuk memeriksa apakah pengguna sudah terdaftar
+    public boolean isPenggunaTerdaftar(String username) {
+        for (Pengguna pengguna : daftarPengguna) {
+            if (pengguna.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Metode utama yang menjalankan aplikasi
+    public void run() {
+        // Input dari pengguna
+        Scanner scanner = new Scanner(System.in);
+
+        // Logika registrasi atau login
+        boolean isRegistered = false; // Menandakan apakah pengguna sudah terdaftar atau belum
+        String username = null; // Menyimpan username pengguna yang sedang aktif
+    
+        while (!isRegistered) {
+            // Tampilan awal untuk registrasi atau login
+            System.out.println(" __________________________________________________");
+            System.out.println("|                                                  |");
+            System.out.println("|   SELAMAT DATANG DI SISTEM RESERVASI LAPANGAN !  |");
+            System.out.println("|__________________________________________________|");
+            System.out.println("|                                                  |");
+            System.out.println("| MAIN MENU :                                      |");
+            System.out.println("| 1. LOGIN AKUN                                    |");
+            System.out.println("| 2. REGISTRASI AKUN                               |");
+            System.out.println("|__________________________________________________|");
+
+
+            System.out.print("\nPILIH MENU : ");
+            int menuChoice = scanner.nextInt();
+            scanner.nextLine(); // Membersihkan newline
+
+            switch (menuChoice) {
+                case 1: // Login pengguna
+                    System.out.println(" __________________________________________________");
+                    System.out.println("|                                                  |");
+                    System.out.println("|                   FORM LOGIN                     |");
+                    System.out.println("|__________________________________________________|");
+                    System.out.print("\nMASUKKAN USERNAME : ");
+                    username = scanner.nextLine();
+                    System.out.print("\nMASUKKAN PASSWORD : ");
+                    String loginPassword = scanner.nextLine();
+
+                    // Logika login
+                    if (ReservasiLapangan.getInstance().login(username, loginPassword)) {
+                    System.out.println(" __________________________________________________");
+                    System.out.println("|                                                  |");
+                    System.out.println("|                  LOGIN BERHASIL                  |");
+                    System.out.println("|__________________________________________________|");
+                        isRegistered = true;
+                    } else {
+                        System.out.println("\nLOGIN GAGAL. USERNAME ATAU PASSWORD SALAH.");
+                    }
+                    break;
+                case 2: // Registrasi pengguna baru
+                    System.out.println(" __________________________________________________");
+                    System.out.println("|                                                  |");
+                    System.out.println("|                 FORM REGISTRASI                  |");
+                    System.out.println("|__________________________________________________|");
+                    System.out.print("\nMASUKKAN USERNAME : ");
+                    String regUsername = scanner.nextLine();
+
+                    // Periksa apakah username sudah terdaftar
+                    if (ReservasiLapangan.getInstance().isPenggunaTerdaftar(regUsername)) {
+                        System.out.println("\nUSERNAME SUDAH TERDAFTAR. SILAKAN LOGIN.");
+                    } else {
+                        System.out.print("\nMASUKKAN PASSWORD : ");
+                        String regPassword = scanner.nextLine();
+                        ReservasiLapangan.getInstance().tambahPengguna(regUsername, regPassword);
+                        ReservasiLapangan.getInstance().simpanDaftarPengguna(); // Simpan daftar pengguna setelah registrasi
+                        System.out.println(" __________________________________________________");
+                        System.out.println("|                                                  |");
+                        System.out.println("|    REGISTRASI BERHASIL! SILAKAN LOGIN KEMBALI    |");
+                        System.out.println("|__________________________________________________|");
+                        isRegistered = true;
+                        currentUser = regUsername; // Set pengguna yang sedang login
+                    }
+                    break;
+                default:
+                    System.out.println("\nPILIHAN TIDAK VALID. SILAKAN PILIH 1 ATAU 2.");
+                    break;
+            }
+        }
+        
+        // Tampilan lanjutan setelah login
+        System.out.println(" __________________________________________________");
+        System.out.println("|                                                  |");
+        System.out.println("|              MENU PILIHAN LAPANGAN               |");
+        System.out.println("|__________________________________________________|");
+        System.out.println("|                                                  |");
+        System.out.println("| 1. LAPANGAN FUTSAL                               |");
+        System.out.println("| 2. LAPANGAN BADMINTON                            |");
+        System.out.println("|__________________________________________________|");
+
+        System.out.print("\nSILAHKAN PILIH LAPANGAN : "); // Meminta input jenis lapangan
+        int pilihanLapangan = scanner.nextInt();
+        scanner.nextLine(); // Membersihkan newline
+
+        Lapangan lapanganTerpilih = null;
+        // Logika pilihan lapangan
+        switch (pilihanLapangan) {
+            case 1: 
+                lapanganTerpilih = new LapanganFutsal("LAPANGAN FUTSAL", "08:00");
+                break;
+            case 2:
+                lapanganTerpilih = new LapanganBadminton("LAPANGAN BADMINTON", "08:00");
+                break;
+            default:
+                System.out.println("\nPILIHAN LAPANGAN TIDAK VALID!");
+                return;
+        }
+
+        System.out.println(" ");
+        SimpleCalendar.printCurrentMonthCalendar(); // Mencetak kalender bulan saat ini
+        System.out.println(" ");
+
+        System.out.print("\nSILAHKAN PILIH HARI (SENIN - MINGGU) : ");
+        String hari = scanner.nextLine();
+
+        System.out.print("\nMASUKKAN TANGGAL HARI YANG DIPILIH : ");
+        int tanggal = scanner.nextInt();
+        scanner.nextLine(); // Membersihkan newline
+
+        // Menggabungkan tanggal dengan bulan dan tahun saat ini
+        Calendar calendar = Calendar.getInstance();
+        int tahun = calendar.get(Calendar.YEAR);
+        int bulan = calendar.get(Calendar.MONTH);
+        calendar.set(tahun, bulan, tanggal);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String tanggalReservasi = dateFormat.format(calendar.getTime());
+
+        System.out.print("\nSILAHKAN PILIH WAKTU MAIN (format HH:mm) : "); // Meminta input waktu reservasi
+        String jam = scanner.nextLine();
+
+        System.out.print("\nSILAHKAN MASUKKAN JUMLAH JAM BERMAIN : "); // Meminta input jumlah jam main
+        int jumlahJam = scanner.nextInt();
+
+        // Membuat objek Reservasi
+        Reservasi reservasi = new Reservasi(lapanganTerpilih, hari, tanggalReservasi, jam, jumlahJam, ReservasiLapangan.getInstance().getCurrentUser());
+        
+        // Menampilkan informasi reservasi
+        System.out.println("\nRESERVASI BERHASIL !\n");
+        System.out.println(reservasi.getInfo()); // Mencetak info reservasi
+
+        // Membuat objek ReservasiManager
+        ReservasiManager reservasiManager = new ReservasiManager();
+
+        // Membaca daftar reservasi dari file
+        reservasiManager.bacaReservasiDariFile("daftar_reservasi.txt");
+            // Menambahkan reservasi ke dalam ReservasiManager
+            if (reservasiManager.cekKetersediaan(reservasi)) {
+                reservasiManager.tambahkanReservasi(reservasi);
+                System.out.println("\nRESERVASI BERHASIL DITAMBAHKAN KE DALAM DAFTAR");
+
+                // Memperbarui daftar reservasi
+                updatedReservasiList = reservasiManager.getReservasiList();
+                reservasiManager.updateReservasiList(updatedReservasiList);
+                
+                // Menyimpan daftar reservasi ke dalam file
+                reservasiManager.simpanReservasiKeFile("daftar_reservasi.txt");
+                
+                // Menampilkan daftar reservasi
+                // reservasiManager.printReservasiList();
+
+            } else {
+                System.out.println("\nMAAF, LAPANGAN TIDAK TERSEDIA PADA JAM TERSEBUT");
+            } 
+    }
+
+// Metode utama untuk menjalankan program
+public static void main(String[] args) {
+        ReservasiLapangan program = ReservasiLapangan.getInstance(); // Membuat instance program
+        program.bacaDaftarPengguna(); // Membaca daftar pengguna dari file
+        program.run(); // Menjalankan aplikasi
+    }
+
+}
