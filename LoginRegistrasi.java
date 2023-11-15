@@ -1,5 +1,7 @@
+import java.util.ArrayList;
+
 // Kelas LoginRegistrrasi untuk mengelola daftar pengguna dan login
-class LoginRegistrasi {
+public class LoginRegistrasi {
     private ArrayList<Pengguna> daftarPengguna = new ArrayList<>(); // ArrayList untuk menyimpan objek Pengguna
 
     // Metode untuk menambahkan pengguna baru ke dalam daftar
