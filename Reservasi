@@ -1,5 +1,5 @@
 // Kelas Reservasi untuk merepresentasikan reservasi lapangan
-class Reservasi {
+public class Reservasi {
     // Variabel-variabel instance private untuk menyimpan informasi reservasi
     private Lapangan lapangan;
     private String hari;
