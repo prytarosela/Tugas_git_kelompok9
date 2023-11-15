@@ -1,0 +1,21 @@
+// Kelas turunan pertama (subclass) LapanganFutsal
+class LapanganFutsal extends Lapangan {
+    // Konstruktor untuk inisialisasi objek LapanganFutsal
+    public LapanganFutsal(String nama, String jam) {
+        super(nama, "futsal", jam);
+    }
+
+    // Implementasi metode abstrak hitungHarga untuk LapanganFutsal
+    @Override
+    public int hitungHarga() {
+        // Logika harga khusus untuk lapangan futsal
+        if (getJenis().equals("futsal")) {
+            if (getJam().compareTo("08:00") >= 0 && getJam().compareTo("18:00") < 0) {
+                return 130000;
+            } else if (getJam().compareTo("20:00") >= 0 && getJam().compareTo("24:00") <= 0) {
+                return 180000;
+            }
+        }
+        return 0; // Default jika jenis lapangan tidak sesuai
+    }
+}
