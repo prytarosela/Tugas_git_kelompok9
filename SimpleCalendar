@@ -3,17 +3,49 @@ import java.text.SimpleDateFormat;
 
 // Kelas SimpleCalendar untuk menampilkan kalender bulan ini
 public class SimpleCalendar {
-    public static void main(String[] args) {
-        printCurrentMonthCalendar();
-    }
-// Metode untuk mendapatkan hari pertama dari bulan ini
-    private static int getFirstDayOfMonth(Calendar calendar) {
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        return calendar.get(Calendar.DAY_OF_WEEK) - 1;
-    }
+        public static void main(String[] args) {
+            printCurrentMonthCalendar();
+        }
+    
+    // Metode untuk mencetak kalender bulan ini
+        public static void printCurrentMonthCalendar() {
+            Calendar calendar = Calendar.getInstance(); // Mendapatkan instance dari kelas Calendar
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy"); // Menginisialisasi objek SimpleDateFormat untuk format bulan dan tahun
+            String monthYear = dateFormat.format(calendar.getTime()); // Mendapatkan string bulan dan tahun saat ini
+    
+            int firstDayOfMonth = getFirstDayOfMonth(calendar); // Mendapatkan hari pertama dari bulan ini
+            int numberOfDaysInMonth = getNumberOfDaysInMonth(calendar); // Mendapatkan jumlah hari dalam bulan ini
+    
+            // Mencetak header kalender
+            System.out.println("-----------------------------");
+            System.out.println("        " + monthYear);
+            System.out.println("-----------------------------");
+            System.out.println("Min Sen Sel Rab Kam Jum Sab");
+    
+            // Menambahkan spasi sebelum hari pertama bulan dimulai
+            for (int i = 0; i < firstDayOfMonth; i++) {
+                System.out.print("    ");
+            }
+    
+            // Mencetak hari dalam kalender
+            for (int day = 1; day <= numberOfDaysInMonth; day++) {
+                System.out.printf("%3d ", day);
+                // Pindah baris setiap akhir minggu
+                if ((firstDayOfMonth + day) % 7 == 0) {
+                    System.out.println();
+                }
+            }
+        }
+    
+    // Metode untuk mendapatkan hari pertama dari bulan ini
+        private static int getFirstDayOfMonth(Calendar calendar) {
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            return calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        }
 
     // Metode untuk mendapatkan jumlah hari dalam bulan ini
     private static int getNumberOfDaysInMonth(Calendar calendar) {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
+
 }
