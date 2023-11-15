@@ -1,4 +1,4 @@
-class Pengguna { // Kelas Pengguna untuk merepresentasikan pengguna dengan username dan password
+public class Pengguna { // Kelas Pengguna untuk merepresentasikan pengguna dengan username dan password
     // Variabel instance private untuk menyimpan username dan password
     private String username;
     private String password;
