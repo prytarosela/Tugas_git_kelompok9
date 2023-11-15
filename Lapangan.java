@@ -1,5 +1,5 @@
 // Kelas abstrak Lapangan sebagai basis untuk jenis lapangan lainnya
-abstract class Lapangan {
+public abstract class Lapangan {
     // Variabel instance private untuk menyimpan nama, jenis, dan jam
     private String nama;
     private String jenis;
