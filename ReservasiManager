@@ -1,0 +1,130 @@
+// Kelas ReservasiManager untuk mengelola daftar reservasi
+class ReservasiManager {
+    // List untuk menyimpan objek Reservasi
+    private List<Reservasi> reservasiList;
+
+    // Metode getter untuk mendapatkan daftar reservasi
+    public List<Reservasi> getReservasiList() {
+        return reservasiList;
+    }
+
+    // Metode untuk memperbarui daftar reservasi
+    public void updateReservasiList(List<Reservasi> updatedReservasiList) {
+        this.reservasiList = updatedReservasiList;
+    }
+
+    // Konstruktor untuk inisialisasi objek ReservasiManager
+    public ReservasiManager() {
+        this.reservasiList = new ArrayList<>();
+    }
+
+    // Metode untuk memeriksa ketersediaan lapangan pada waktu tertentu
+    public boolean cekKetersediaan(Reservasi reservasi) {
+    for (Reservasi existingReservasi : reservasiList) {
+        if (existingReservasi.conflictWith(reservasi) &&
+            existingReservasi.getLapangan().getJenis().equals(reservasi.getLapangan().getJenis())) {
+            return false; // Ada konflik jadwal dan jenis lapangan sama
+        }
+    }
+    return true; // Tidak ada konflik jadwal atau jenis lapangan berbeda
+    }
+
+    // Metode untuk menambahkan reservasi ke dalam daftar reservasi
+    public void tambahkanReservasi(Reservasi reservasi) {
+    if (cekKetersediaan(reservasi)) {
+        reservasiList.add(reservasi);
+        //System.out.println("\nRESERVASI BERHASIL DITAMBAHKAN KE DALAM DAFTAR");
+
+        // Memperbarui daftar reservasi
+        updateReservasiList(reservasiList);
+        updateReservasiFile("daftar_reservasi.txt"); // Memperbarui file daftar reservasi
+    } else {
+        System.out.println("\nMAAF, LAPANGAN TIDAK TERSEDIA PADA JAM TERSEBUT");
+    }
+    }
+
+    // Metode untuk menyimpan daftar reservasi ke dalam file
+    private void updateReservasiFile(String namaFile) {
+        try (FileWriter writer = new FileWriter(namaFile)) {
+            for (Reservasi reservasi : reservasiList) {
+                // Format data reservasi: namaLapangan,jenisLapangan,jam,hari,tanggalReservasi,jumlahJam
+                writer.write(
+                        reservasi.getLapangan().getNama() + "," +
+                        reservasi.getLapangan().getJenis() + "," +
+                        reservasi.getLapangan().getJam() + "," +
+                        reservasi.getHari() + "," +
+                        reservasi.getTanggalReservasi() + "," +
+                        reservasi.getJumlahJam() + "\n"
+                );
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    // Metode untuk menampilkan daftar reservasi
+    public void printReservasiList() {
+        System.out.println("DAFTAR RESERVASI :");
+        for (Reservasi reservasi : reservasiList) {
+            System.out.println(reservasi.getInfo());
+        }
+    }
+
+    // Metode getter untuk mendapatkan username pengguna yang sedang aktif
+    public String getCurrentUser() {
+        return ReservasiLapangan.getInstance().getCurrentUser();
+    }
+
+    // Metode untuk membaca daftar reservasi dari file
+    public void bacaReservasiDariFile(String namaFile) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(namaFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Pisahkan data reservasi dari baris
+                String[] parts = line.split(",");
+                if (parts.length == 6) {
+                    String namaLapangan = parts[0];
+                    String jenisLapangan = parts[1];
+                    String jam = parts[2];
+                    String hari = parts[3];
+                    String tanggalReservasi = parts[4];
+                    int jumlahJam = Integer.parseInt(parts[5]);
+
+                    // Tentukan jenis lapangan berdasarkan informasi
+                    Lapangan lapangan = null;
+                    if (jenisLapangan.equals("futsal")) {
+                        lapangan = new LapanganFutsal(namaLapangan, jam);
+                    } else if (jenisLapangan.equals("badminton")) {
+                        lapangan = new LapanganBadminton(namaLapangan, jam);
+                    }
+
+                    // Buat objek Reservasi dan tambahkan ke daftar
+                    Reservasi reservasi = new Reservasi(lapangan, hari, tanggalReservasi, jam, jumlahJam, getCurrentUser());
+                    tambahkanReservasi(reservasi);
+                }
+            }
+            //System.out.println("Membaca daftar reservasi dari file.");
+        } catch (IOException e) {
+            //System.out.println("Gagal membaca daftar reservasi dari file: " + e.getMessage());
+        }
+    }
+
+    // Metode untuk menyimpan daftar reservasi ke dalam file
+    public void simpanReservasiKeFile(String namaFile) {
+        try (FileWriter writer = new FileWriter(namaFile)) {
+            for (Reservasi reservasi : reservasiList) {
+                // Format data reservasi: namaLapangan,jenisLapangan,jam,hari,tanggalReservasi,jumlahJam
+                writer.write(
+                        reservasi.getLapangan().getNama() + "," +
+                                reservasi.getLapangan().getJenis() + "," +
+                                reservasi.getLapangan().getJam() + "," +
+                                reservasi.getHari() + "," +
+                                reservasi.getTanggalReservasi() + "," +
+                                reservasi.getJumlahJam() + "\n"
+                );
+            }
+            //System.out.println("Daftar reservasi disimpan ke dalam file.");
+        } catch (IOException e) {
+            //System.out.println("Gagal menyimpan daftar reservasi ke dalam file: " + e.getMessage());
+        }
+    }
+}
