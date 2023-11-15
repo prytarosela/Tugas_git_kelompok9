@@ -1,5 +1,5 @@
 // Kelas turunan kedua (subclass) LapanganBadminton
-class LapanganBadminton extends Lapangan {
+public class LapanganBadminton extends Lapangan {
     public LapanganBadminton(String nama, String jam) {
         super(nama, "badminton", jam);
     }
