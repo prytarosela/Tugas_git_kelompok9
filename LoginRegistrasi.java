@@ -1,5 +1,4 @@
-import java.util.*;
-
+// Kelas LoginRegistrrasi untuk mengelola daftar pengguna dan login
 class LoginRegistrasi {
     private ArrayList<Pengguna> daftarPengguna = new ArrayList<>(); // ArrayList untuk menyimpan objek Pengguna
 
