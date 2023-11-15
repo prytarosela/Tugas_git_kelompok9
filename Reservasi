@@ -1,0 +1,60 @@
+// Kelas Reservasi untuk merepresentasikan reservasi lapangan
+class Reservasi {
+    // Variabel-variabel instance private untuk menyimpan informasi reservasi
+    private Lapangan lapangan;
+    private String hari;
+    private String tanggalReservasi;
+    private int jumlahJam;
+    private int harga;
+    private String username;
+
+    // Metode untuk memeriksa konflik jadwal dengan reservasi lain
+    public boolean conflictWith(Reservasi other) {
+        return this.lapangan.equals(other.lapangan) &&
+                this.hari.equals(other.hari) &&
+                this.tanggalReservasi.equals(other.tanggalReservasi) &&
+                this.lapangan.getJam().equals(other.lapangan.getJam());
+    }
+
+    // Konstruktor untuk inisialisasi objek Reservasi
+    public Reservasi(Lapangan lapangan, String hari, String tanggalReservasi, String jam, int jumlahJam, String username) {
+        this.lapangan = lapangan;
+        this.hari = hari;
+        this.tanggalReservasi = tanggalReservasi;
+        this.jumlahJam = jumlahJam;
+        this.username = username;
+        hitungHarga(); // Memanggil metode hitungHarga untuk menghitung total harga reservasi
+    }
+
+    // Metode untuk menghitung total harga reservasi
+    private void hitungHarga() {
+        this.harga = lapangan.hitungHarga() * jumlahJam;
+    }
+
+    // Metode untuk mendapatkan informasi reservasi
+    public String getInfo() {
+        return "RESERVASI " + lapangan.getNama() + " ATAS NAMA " + username + " PADA HARI " + hari + ", TANGGAL " + tanggalReservasi +
+                " JAM " + lapangan.getJam() + " UNTUK " + jumlahJam + " JAM DENGAN TOTAL HARGA : " + harga;
+    }
+
+    // Metode getter untuk mendapatkan hari reservasi
+    public String getHari() {
+    return hari;
+    }
+
+    // Metode getter untuk mendapatkan tanggal reservasi
+    public String getTanggalReservasi() {
+        return tanggalReservasi;
+    }
+
+    // Metode getter untuk mendapatkan jumlah jam reservasi
+    public int getJumlahJam() {
+        return jumlahJam;
+    }
+
+    // Metode getter untuk mendapatkan objek Lapangan
+    public Lapangan getLapangan() {
+        return lapangan;
+    }
+
+}
