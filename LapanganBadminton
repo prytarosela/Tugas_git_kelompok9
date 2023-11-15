@@ -1,0 +1,20 @@
+// Kelas turunan kedua (subclass) LapanganBadminton
+class LapanganBadminton extends Lapangan {
+    public LapanganBadminton(String nama, String jam) {
+        super(nama, "badminton", jam);
+    }
+
+    // Implementasi metode abstrak hitungHarga untuk LapanganBadminton
+    @Override
+    public int hitungHarga() {
+        // Logika harga khusus untuk lapangan badminton
+        if (getJenis().equals("badminton")) {
+            if (getJam().compareTo("08:00") >= 0 && getJam().compareTo("18:00") < 0) {
+                return 80000;
+            } else if (getJam().compareTo("20:00") >= 0 && getJam().compareTo("24:00") <= 0) {
+                return 100000;
+            }
+        }
+        return 0; // Default jika jenis lapangan tidak sesuai
+    }
+}
